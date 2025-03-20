@@ -1,0 +1,21 @@
+=== Registro de pruebas Arduino - 2025-03-20 20:12:16 ===
+
+[2025-03-20 20:12:16] Iniciando secuencia de prueba: 1 ciclos
+[2025-03-20 20:12:16] Iniciando ciclo 1/1
+[2025-03-20 20:12:16] Ejecutando comando: ON:1
+[2025-03-20 20:12:17] Respuesta: LED 1 encendido
+[2025-03-20 20:12:17] Ejecutando comando: WAIT:1000
+[2025-03-20 20:12:17] Respuesta: Esperando 1000 ms
+[2025-03-20 20:12:17] Ejecutando comando: ON:2
+[2025-03-20 20:12:18] Respuesta: DONE waiting
+[2025-03-20 20:12:18] Ejecutando comando: WAIT:1000
+[2025-03-20 20:12:19] Respuesta: Esperando 1000 ms
+[2025-03-20 20:12:19] Ejecutando comando: OFF:1
+[2025-03-20 20:12:19] Respuesta: DONE waiting
+[2025-03-20 20:12:19] Ejecutando comando: WAIT:1000
+[2025-03-20 20:12:20] Respuesta: Esperando 1000 ms
+[2025-03-20 20:12:20] Ejecutando comando: OFF:2
+[2025-03-20 20:12:20] Respuesta: DONE waiting
+[2025-03-20 20:12:20] Ejecutando comando: WAIT:1000
+[2025-03-20 20:12:21] Respuesta: Esperando 1000 ms
+[2025-03-20 20:12:21] Secuencia de prueba completada
