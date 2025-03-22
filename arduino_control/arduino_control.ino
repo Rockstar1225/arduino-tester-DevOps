@@ -118,10 +118,8 @@ void procesarComando(String comando)
     else if (comando.startsWith("WAIT:"))
     {
         int tiempoEspera = comando.substring(5).toInt();
-        Serial.print("Esperando ");
-        Serial.print(tiempoEspera);
-        Serial.println(" ms");
         delay(tiempoEspera);
+        Serial.println("DONE waiting");
     }
     // Comando no reconocido
     else

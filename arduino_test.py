@@ -15,6 +15,7 @@ import csv
 from datetime import datetime
 import argparse
 import os
+import threading
 
 class ArduinoTester:
     def __init__(self, puerto, baudrate=9600, timeout=2):
@@ -33,7 +34,8 @@ class ArduinoTester:
         self.log_file = None
         self.csv_file = None
         self.csv_writer = None
-        
+        self.lock = threading.Lock()
+         
     def conectar(self):
         """
         Establece la conexión con Arduino
@@ -91,8 +93,7 @@ class ArduinoTester:
         # Enviar comando
         self.arduino.write(f"{comando}\n".encode('utf-8'))
         
-        # Esperar respuesta
-        time.sleep(0.5)
+        time.sleep(0.5)  # Esperar un momento para que Arduino proces
         
         # Leer respuesta
         respuesta = []
@@ -103,9 +104,7 @@ class ArduinoTester:
                     respuesta.append(linea)
                     print(f"Arduino > {linea}")
                     break
-            else:
-                time.sleep(0.1) 
-        
+                 
         return respuesta
     
     def encender_modulo(self, numero_modulo):
@@ -282,12 +281,17 @@ class ArduinoTester:
                 self.registrar_evento(f"Iniciando ciclo {ciclo}/{ciclos}")
 
                 for comando in comandos:
-                    self.registrar_evento(f"Ejecutando comando: {comando}")
-                    respuesta = self.enviar_comando(comando)
-                    for linea in respuesta:
-                        self.registrar_evento(f"Respuesta: {linea}")
-                    
-                # Esperar antes del siguiente ciclo
+                    with self.lock:
+                        wait_time = 0
+                        self.registrar_evento(f"Ejecutando comando: {comando}")
+                        if comando[:5] == "TEMP:":
+                            evento = comando.split(":")[1]
+                            temperatura = self.leer_temperatura()
+                            self.registrar_temperatura(temperatura, evento=evento)
+                            continue
+                        respuesta = self.enviar_comando(comando)
+                        for linea in respuesta:
+                            self.registrar_evento(f"Respuesta: {linea}")
                 if ciclo < ciclos:
                     self.registrar_evento(f"Esperando {intervalo}s antes del siguiente ciclo")
                     time.sleep(intervalo)
@@ -296,6 +300,7 @@ class ArduinoTester:
             return True
 
         except Exception as e:
+            print(e)
             self.registrar_evento(f"Error durante la secuencia de prueba: {e}")
             return False
 
@@ -319,6 +324,7 @@ def main():
     parser.add_argument('-c', '--ciclos', type=int, default=1, help='Número de ciclos de prueba')
     parser.add_argument('-l', '--listar', action='store_true', help='Listar puertos disponibles')
     parser.add_argument('-s', '--secuencia', nargs='+', help='Secuencia de comandos a ejecutar')
+    parser.add_argument('-n', '--nombre', help='Nombre base para los archivos de registro')
     args = parser.parse_args()
     
     # Listar puertos si se solicita
@@ -362,7 +368,8 @@ def main():
         return
     
     # Iniciar registro
-    tester.iniciar_registro()
+    nombre_base = args.nombre if args.nombre else "arduino_test"
+    tester.iniciar_registro(nombre_base=nombre_base)
     
     # Ejecutar secuencia de prueba con comandos personalizados
     comandos = args.secuencia if args.secuencia else []
