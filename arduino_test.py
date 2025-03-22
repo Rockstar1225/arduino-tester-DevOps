@@ -284,7 +284,7 @@ class ArduinoTester:
                     with self.lock:
                         wait_time = 0
                         self.registrar_evento(f"Ejecutando comando: {comando}")
-                        if comando[:5] == "TEMP:":
+                        if comando.startwith("TEMP:"):
                             evento = comando.split(":")[1]
                             temperatura = self.leer_temperatura()
                             self.registrar_temperatura(temperatura, evento=evento)
